@@ -40,12 +40,12 @@ exports.genre_create_get = asyncHandler(async (req, res, next) => {
 });
 
 // Handle Genre create on POST.
-exports.genre_create_post = asyncHandler(async (req, res, next) => {
+exports.genre_create_post = [
 	// Validate and sanitize the name field.
 	body('name', 'Genre name must contain at least 3 characters')
 		.trim()
 		.isLength({ min: 3 })
-		.escape();
+		.escape(),
 
 	// Process request after validation and sanitization.
 	asyncHandler(async (req, res, next) => {
@@ -66,17 +66,18 @@ exports.genre_create_post = asyncHandler(async (req, res, next) => {
 		} else {
 			// Data from form is valid.
 			// Check if Genre with same name already exists.
-			const genreExists = await Genre.findOne({ name: req.body.name }.exec());
+			const genreExists = await Genre.findOne({ name: req.body.name }).exec();
 			if (genreExists) {
 				// Genre exists, redirect to its detail page.
 				res.redirect(genreExists.url);
 			} else {
 				await genre.save();
+				// New genre saved. Redirect to genre detail page.
 				res.redirect(genre.url);
 			}
 		}
-	});
-});
+	}),
+];
 
 // Display Genre delete form on GET.
 exports.genre_delete_get = asyncHandler(async (req, res, next) => {
