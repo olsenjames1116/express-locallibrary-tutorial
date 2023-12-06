@@ -144,6 +144,40 @@ exports.genre_update_get = asyncHandler(async (req, res, next) => {
 });
 
 // Handle Genre update on POST.
-exports.genre_update_post = asyncHandler(async (req, res, next) => {
-	res.send('NOT IMPLEMENTED: Genre update POST');
-});
+exports.genre_update_post = [
+	// Validate and sanitize the name field.
+	body('name', 'Genre name must contain at least 3 characters')
+		.trim()
+		.isLength({ min: 3 })
+		.escape(),
+
+	// Process request after validation and sanitization.
+	asyncHandler(async (req, res, next) => {
+		// Extract the validation errors from a request.
+		const errors = validationResult(req);
+
+		// Create a Genre object with escaped/trimmed data and old id.
+		const genre = new Genre({
+			name: req.body.name,
+			_id: req.params.id,
+		});
+
+		if (!errors.isEmpty()) {
+			// There are errors. Render form again with sanitized values/error messages.
+			res.render('genre_form', {
+				title: 'Update Genre',
+				genre: genre,
+			});
+			return;
+		} else {
+			// Data form is valid. Update the record.
+			const updatedGenre = await Genre.findByIdAndUpdate(
+				req.params.id,
+				genre,
+				{}
+			);
+			// Redirect to genre detail page.
+			res.redirect(updatedGenre.url);
+		}
+	}),
+];
