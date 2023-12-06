@@ -25,6 +25,7 @@ BookInstanceSchema.virtual('due_back_formatted').get(function () {
 	return DateTime.fromJSDate(this.due_back).toLocaleString(DateTime.DATE_MED);
 });
 
+// Virtual to format date for input field.
 BookInstanceSchema.virtual('due_back_yyyy_mm_dd').get(function () {
 	return DateTime.fromJSDate(this.due_back).toISODate(); // format 'YYYY-MM-DD'
 });
