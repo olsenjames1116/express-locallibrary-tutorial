@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -36,9 +37,7 @@ app.use(
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 
-const dev_db_url =
-	'mongodb+srv://admin:uRD2fKkaBBFEhmL1@cluster0.ls2dopv.mongodb.net/local_library?retryWrites=true&w=majority';
-const mongoDB = process.env.MONGODB_URI || dev_db_url;
+const mongoDB = process.env.MONGODB_URI || process.env.DEVDB_URI;
 main().catch((err) => {
 	console.log(err);
 });
